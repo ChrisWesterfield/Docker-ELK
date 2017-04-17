@@ -34,7 +34,10 @@ RUN curl https://artifacts.elastic.co/downloads/kibana/kibana-5.3.0-linux-x86_64
 	chown -R kibana:kibana /kibana /logs/kibana && \
 	rm -rf /kibana/node/ && \
 	mkdir -p /kibana/node/bin && \
-	ln -s /usr/bin/node /kibana/node/bin/node
+	ln -s /usr/bin/node /kibana/node/bin/node && \
+	mv /kibana/config/kibana.yml /kibana/config/kibana.yml.dist
+COPY ./config/kibana.yml /kibana/config/kibana.yml
+
 
 #Install Logstash
 RUN curl https://artifacts.elastic.co/downloads/logstash/logstash-5.3.0.tar.gz > /logstash.tgz && \
@@ -42,7 +45,8 @@ RUN curl https://artifacts.elastic.co/downloads/logstash/logstash-5.3.0.tar.gz >
 	tar -xzf logstash.tgz && \
 	mv /logstash-5.3.0 /logstash && \
 	mkdir /logstash/etc && \
-	mkdir /logs/logstash 
+	mkdir /logs/logstash  && \
+	rm /logstash.tgz
 
 
 
@@ -57,6 +61,8 @@ COPY ./config/supervisor/logstash.ini /etc/supervisor.d/logstash.ini
 
 RUN apk del --purge curl git && \
     rm -rf /var/cache/apk/*
+
+RUN echo "vm.max_map_count=262144" > /etc/sysctl.d/01-mjrone
 
 EXPOSE 9100 9200 9300 5000
 

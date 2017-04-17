@@ -1,0 +1,5 @@
+server.port: 80
+server.host: "0.0.0.0"
+server.name: "log.test"
+elasticsearch.url: "http://localhost:9200"
+kibana.index: ".kibana"
